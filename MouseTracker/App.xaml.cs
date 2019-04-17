@@ -6,7 +6,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.ComponentModel;
 using System.Windows;
-using System.Runtime.InteropServices;
 
 namespace MouseTracker {
     /// <summary>
@@ -16,14 +15,6 @@ namespace MouseTracker {
         private System.Windows.Forms.NotifyIcon _notifyIcon;
         public System.Windows.Input.MouseButtonState RightButton { get; }
         private bool _isExit;
-        public const UInt32 SPI_SETMOUSESPEED = 0x0071;
-        [DllImport("user32.dll")]
-        static extern Boolean SystemParametersInfo(
-            UInt32 uiAction,
-            UInt32 uiParam,
-            UInt32 pvParam,
-            UInt32 fWinIni);
-
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
@@ -36,9 +27,6 @@ namespace MouseTracker {
             _notifyIcon.Icon = MouseTracker.Properties.Resources.Icon1;
             _notifyIcon.Visible = true;
             CreateContextMenu();
-
-            SystemParametersInfo(SPI_SETMOUSESPEED, 0, 10, 0);
-            
         }
 
         public void MouseClick(object sender, System.Windows.Forms.MouseEventArgs e)

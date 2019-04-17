@@ -11,18 +11,65 @@
         Title="Mouse Tracker ++" Height="450" Width="200" WindowStyle="None">
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="18*"/>
+            <RowDefinition Height="33*"/>
+            <RowDefinition Height="37*"/>
+            <RowDefinition Height="23*"/>
+            <RowDefinition Height="32*"/>
+            <RowDefinition Height="23*"/>
+            <RowDefinition Height="33*"/>
+            <RowDefinition Height="24*"/>
+            <RowDefinition Height="32*"/>
+            <RowDefinition Height="90*"/>
+            <RowDefinition Height="25*"/>
+            <RowDefinition Height="25*"/>
+            <RowDefinition Height="26*"/>
             <RowDefinition Height="19*"/>
-            <RowDefinition Height="38*"/>
-            <RowDefinition Height="385*"/>
         </Grid.RowDefinitions>
-        <Label Content="Mouse Tracker ++" FontSize="20" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="10,0" Height="37" Width="172" Grid.Row="1"/>
-        <StackPanel Margin="10,8,10,-22" Grid.Row="2">
+        <Label Content="Mouse Tracker ++" FontSize="20" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="10,0" Height="37" Width="172" Grid.Row="1" Grid.RowSpan="2"/>
+        <StackPanel Margin="10,8,10,0" Grid.Row="2">
             <ComboBox>
-                <ComboBoxItem IsSelected="True" Content="Profil 1"/>
-                <ComboBoxItem Content="Profil 2"/>
-                <ComboBoxItem Content="Profil 3"/>
+                <ComboBoxItem IsSelected="True" Content="Vyber profil"/>
+                <ComboBoxItem Content="Profil 1" Selected="SelectProfile"/>
+                <ComboBoxItem Content="Profil 2" Selected="SelectProfile"/>
+                <ComboBoxItem Content="Profil 3" Selected="SelectProfile"/>
             </ComboBox>
         </StackPanel>
+        <StackPanel Grid.Row="3" Orientation="Horizontal">
+            <Label Content="Rychlost kurzoru:" HorizontalAlignment="Center"></Label>
+            <Label Name="Slidervalue" Content="10" HorizontalAlignment="Center"></Label>
+        </StackPanel>
+        <Slider Name="SliderSpeed" Grid.Row="4" Minimum="1" Maximum="20" Value="10" ValueChanged="SliderFunction"></Slider>
+        <Label Content="1" Grid.Row="4" FontSize="10" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="16" Height="23"/>
+        <Label Content="10" Grid.Row="4" FontSize="10" HorizontalAlignment="Center" VerticalAlignment="Bottom" Width="22" Height="23" Margin="82,0,88,0"/>
+        <Label Content="20" Grid.Row="4" FontSize="10" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="21" Height="23"/>
+
+        <StackPanel Grid.Row="5" Orientation="Horizontal">
+            <Label Content="Rychlost scrollování:" HorizontalAlignment="Center"></Label>
+            <Label Name="Slidervaluewheel" Content="3" HorizontalAlignment="Center"></Label>
+        </StackPanel>
+        <Slider Name="SliderSpeedWheel" Grid.Row="6" Minimum="1" Maximum="100" Value="3" ValueChanged="SliderFunctionWheel"></Slider>
+        <Label Content="1" Grid.Row="6" FontSize="10" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="16" Height="24"/>
+        <Label Content="50" Grid.Row="6" FontSize="10" HorizontalAlignment="Center" VerticalAlignment="Bottom" Width="22" Height="24" Margin="82,0,88,0"/>
+        <Label Content="100" Grid.Row="6" FontSize="10" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="26" Height="24"/>
+
+        <StackPanel Grid.Row="7" Orientation="Horizontal">
+            <Label Content="Rychlost doubleclicku:" HorizontalAlignment="Center"></Label>
+            <Label Name="SlidervalueDbc" Content="500" HorizontalAlignment="Center"></Label>
+        </StackPanel>
+        <Slider Name="SliderSpeedDbc" Grid.Row="8" Minimum="1" Maximum="5000" Value="500" ValueChanged="SliderFunctionDbc"></Slider>
+        <Label Content="1" Grid.Row="8" FontSize="10" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="16" Height="23"/>
+        <Label Content="2500" Grid.Row="8" FontSize="10" HorizontalAlignment="Center" VerticalAlignment="Bottom" Width="34" Height="23" Margin="82,0,76,0"/>
+        <Label Content="5000" Grid.Row="8" FontSize="10" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="32" Height="23"/>
+
+        <materialDesign:Card  HorizontalAlignment="Center" Grid.Row="10" Height="24" Width="192">
+            <Button Content="Uložit profil" VerticalAlignment="Center" Height="24" Width="192"/>
+        </materialDesign:Card>
+
+        <materialDesign:Card  HorizontalAlignment="Center" Grid.Row="12" Height="24" Width="192">
+            <Button Content="Nastavit výchozí hodnoty" Click="Setdfl" VerticalAlignment="Center" Height="24" Width="192"/>
+        </materialDesign:Card>
+
         <StackPanel Grid.RowSpan="2">
             <Button Click="Close_Click" Margin="172,0,0,15" BorderBrush="{x:Null}" Foreground="{x:Null}" Height="20">
                 <Button.Background>
