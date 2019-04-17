@@ -22,7 +22,6 @@
             <RowDefinition Height="32*"/>
             <RowDefinition Height="90*"/>
             <RowDefinition Height="25*"/>
-            <RowDefinition Height="25*"/>
             <RowDefinition Height="26*"/>
             <RowDefinition Height="19*"/>
         </Grid.RowDefinitions>
@@ -63,11 +62,11 @@
         <Label Content="5000" Grid.Row="8" FontSize="10" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="32" Height="23"/>
 
         <materialDesign:Card  HorizontalAlignment="Center" Grid.Row="10" Height="24" Width="192">
-            <Button Content="Uložit profil" VerticalAlignment="Center" Height="24" Width="192"/>
+            <Button Content="Uložit profil" VerticalAlignment="Center" Height="24" Margin="10,0"/>
         </materialDesign:Card>
 
-        <materialDesign:Card  HorizontalAlignment="Center" Grid.Row="12" Height="24" Width="192">
-            <Button Content="Nastavit výchozí hodnoty" Click="Setdfl" VerticalAlignment="Center" Height="24" Width="192"/>
+        <materialDesign:Card  HorizontalAlignment="Center" Grid.Row="11" Height="24" Width="192">
+            <Button Content="Nastavit výchozí hodnoty" Click="Setdfl" VerticalAlignment="Center" FontSize="10" Height="24" Margin="10,0"/>
         </materialDesign:Card>
 
         <StackPanel Grid.RowSpan="2">
