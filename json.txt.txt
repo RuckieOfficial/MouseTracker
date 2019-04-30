@@ -1,0 +1,38 @@
+<?php
+if( isset( $_POST["error"] ) && $_POST["error"] == "1") 
+{
+	header('HTTP/1.0 503 Service unavailable', true, 503);
+	die();
+}elseif ( isset( $_POST["data"] ))
+{
+    header('Content-Type: application/json');
+    echo json_encode($_POST["data"] );
+}
+else {
+    class Person
+    {
+        // property declaration
+        public $name = 'name';
+        public $surname = 'surname';
+        public $rc = null;
+        public $datNar = 'def';
+    }
+
+    $arr = array();
+    for ($i = 0; $i < 150; $i++) {
+        $data = new Person();
+
+        $data->name = "name" . $i;
+        $data->surname = " surname" . $i;
+        $data->rc = $i;
+
+        $now = DateTime::createFromFormat('U.u', number_format(microtime(true), 6, '.', ''));
+        $data->datNar = $now->format("m-d-Y H:i:s.u");
+
+        array_push($arr, $data);
+    }
+
+    header('Content-Type: application/json');
+    echo json_encode($arr);
+}
+?>

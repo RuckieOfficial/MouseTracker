@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,6 +27,7 @@ namespace MouseTracker {
         private JsonSerializerSettings settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
         string path = @"../../profiles.json";
         List<Profile> profiles = new List<Profile>();
+        List<Profile> WebProfiles = new List<Profile>();
 
         DispatcherTimer succ = new DispatcherTimer();
         DispatcherTimer newsucc = new DispatcherTimer();
@@ -46,10 +48,21 @@ namespace MouseTracker {
         public MainWindow() {
             InitializeComponent();
             Load();
+            LoadFromWeb();
         }
 
         private void Close_Click(object sender, RoutedEventArgs e) {
             this.Close();
+        }
+        
+        public async void LoadFromWeb() {
+
+            HttpClient httpClient = new HttpClient();
+            var response = await httpClient.GetAsync("https://ruckelu16.sps-prosek.cz/Home/2018/phpfromsql.php");
+            string jsonContent = await response.Content.ReadAsStringAsync();
+            WebProfiles = JsonConvert.DeserializeObject<List<Profile>>(jsonContent, settings);
+
+            //var x = WebProfiles.Name;
         }
 
         private void Load() {
@@ -99,14 +112,27 @@ namespace MouseTracker {
         }
 
         private void LoadProfile(string profilename) {
-            foreach (Profile profile in profiles) {
-                if (profile.Name == profilename) {
-                    SliderSpeed.Value = profile.MouseSensitivity;
-                    SliderSpeedWheel.Value = profile.ScrollSensitivity;
-                    SliderSpeedDbc.Value = profile.DoubleClickSensitivity;
-                    SystemParametersInfo(SPI_SETMOUSESPEED, 0, Convert.ToUInt32(Math.Round(SliderSpeed.Value)), 0);
-                    SystemParametersInfo(SPI_SETWHEELSCROLLLINES, Convert.ToUInt32(Math.Round(SliderSpeedWheel.Value)), 0, 0);
-                    SystemParametersInfo(SPI_SETDOUBLECLICKTIME, Convert.ToUInt32(Math.Round(SliderSpeedDbc.Value)), 0, 0);
+            if (profiles.Count < 1) {
+                foreach (Profile profile in profiles) {
+                    if (profile.Name == profilename) {
+                        SliderSpeed.Value = profile.MouseSensitivity;
+                        SliderSpeedWheel.Value = profile.ScrollSensitivity;
+                        SliderSpeedDbc.Value = profile.DoubleClickSensitivity;
+                        SystemParametersInfo(SPI_SETMOUSESPEED, 0, Convert.ToUInt32(Math.Round(SliderSpeed.Value)), 0);
+                        SystemParametersInfo(SPI_SETWHEELSCROLLLINES, Convert.ToUInt32(Math.Round(SliderSpeedWheel.Value)), 0, 0);
+                        SystemParametersInfo(SPI_SETDOUBLECLICKTIME, Convert.ToUInt32(Math.Round(SliderSpeedDbc.Value)), 0, 0);
+                    }
+                }
+            } else {
+                foreach (Profile profile in WebProfiles) {
+                    if (profile.Name == profilename) {
+                        SliderSpeed.Value = profile.MouseSensitivity;
+                        SliderSpeedWheel.Value = profile.ScrollSensitivity;
+                        SliderSpeedDbc.Value = profile.DoubleClickSensitivity;
+                        SystemParametersInfo(SPI_SETMOUSESPEED, 0, Convert.ToUInt32(Math.Round(SliderSpeed.Value)), 0);
+                        SystemParametersInfo(SPI_SETWHEELSCROLLLINES, Convert.ToUInt32(Math.Round(SliderSpeedWheel.Value)), 0, 0);
+                        SystemParametersInfo(SPI_SETDOUBLECLICKTIME, Convert.ToUInt32(Math.Round(SliderSpeedDbc.Value)), 0, 0);
+                    }
                 }
             }
         }
