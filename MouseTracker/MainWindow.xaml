@@ -67,7 +67,7 @@
         </materialDesign:Card>
 
         <materialDesign:Card  HorizontalAlignment="Center" Grid.Row="10" Height="24" Width="192">
-            <Button Content="Uložit profil" Click="SaveProfile" VerticalAlignment="Center" Height="24" Margin="10,0"/>
+            <Button Content="Uložit profil" Click="Save" VerticalAlignment="Center" Height="24" Margin="10,0"/>
         </materialDesign:Card>
 
         <materialDesign:Card  HorizontalAlignment="Center" Grid.Row="11" Height="24" Width="192">

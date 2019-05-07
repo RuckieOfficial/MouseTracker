@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -26,6 +27,7 @@ namespace MouseTracker {
 
         private JsonSerializerSettings settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
         string path = @"../../profiles.json";
+        string path2 = @"../../profiles2.json";
         List<Profile> profiles = new List<Profile>();
         List<Profile> WebProfiles = new List<Profile>();
 
@@ -47,21 +49,65 @@ namespace MouseTracker {
 
         public MainWindow() {
             InitializeComponent();
-            Load();
-            LoadFromWeb();
+            LoadAll();
+            //Load();
+            //LoadFromWeb();
         }
 
         private void Close_Click(object sender, RoutedEventArgs e) {
             this.Close();
         }
-        
+        bool webcheck() {
+            try {
+                using (var client = new WebClient())
+                using (client.OpenRead("http://clients3.google.com/generate_204")) {
+                    return true;
+                }
+            } catch {
+                return false;
+            }
+        }
+
+        void LoadAll() {
+            if (webcheck() == false) {
+                Load();
+            } else {
+                LoadFromWeb();
+                SynchronizeToJson();
+            }
+        }
+
+        async void SynchronizeToJson() {
+            HttpClient httpClient = new HttpClient();
+            var response = await httpClient.GetAsync("https://ruckelu16.sps-prosek.cz/Home/2018/phpfromsql.php");
+            string jsonContent = await response.Content.ReadAsStringAsync();
+            WebProfiles = JsonConvert.DeserializeObject<List<Profile>>(jsonContent, settings);
+            string webjsonToFile = JsonConvert.SerializeObject(WebProfiles, settings);
+            File.WriteAllText(path2, webjsonToFile);
+        }
+
+        void Save(object sender, RoutedEventArgs e) {
+            if (webcheck() == false) {
+                SaveProfile();
+            } else {
+                WebUpdate(ProfileBox.Text.ToString(), Int32.Parse(Slidervalue.Content.ToString()), Int32.Parse(Slidervaluewheel.Content.ToString()), Int32.Parse(SlidervalueDbc.Content.ToString()));
+            }
+        }
+
+
+
         public async void LoadFromWeb() {
 
             HttpClient httpClient = new HttpClient();
             var response = await httpClient.GetAsync("https://ruckelu16.sps-prosek.cz/Home/2018/phpfromsql.php");
             string jsonContent = await response.Content.ReadAsStringAsync();
             WebProfiles = JsonConvert.DeserializeObject<List<Profile>>(jsonContent, settings);
-
+            foreach (Profile profile in WebProfiles) {
+                ComboBoxItem item = new ComboBoxItem();
+                item.Content = profile.Name;
+                item.Selected += new RoutedEventHandler(SelectProfile);
+                ProfileBox.Items.Add(item);
+            }
             //var x = WebProfiles.Name;
         }
 
@@ -81,7 +127,6 @@ namespace MouseTracker {
 
         private void CreateProfile(object sender, RoutedEventArgs e) {
             profiles.Add(new Profile(NewProfBox.Text, 10, 3, 500));
-            SaveProfiles(profiles);
             ProfileBox.Items.Clear();
             ComboBoxItem choose = new ComboBoxItem();
             choose.Content = "Vyber profil";
@@ -94,7 +139,12 @@ namespace MouseTracker {
             newsucc.Tick += newsucc_fnc;
             newsucc.Start();
             NewSucc.Visibility = Visibility.Visible;
-    }
+            if (webcheck() == true) {
+                SaveProfileToWeb(NewProfBox.Text, 10, 3, 500);
+            } else {
+                SaveProfiles(profiles);
+            }
+        }
 
 
         void newsucc_fnc(object sender, EventArgs e) {
@@ -149,7 +199,33 @@ namespace MouseTracker {
         File.WriteAllText(path, jsonToFile);
         }
 
-        private void SaveProfile(object sender, RoutedEventArgs e) {
+        private async void SaveProfileToWeb(string name, int ms, int ss, int ds) {
+            var client = new HttpClient();
+            var request = new HttpRequestMessage(HttpMethod.Post, "https://ruckelu16.sps-prosek.cz/Home/2018/phptosql.php");
+            var keyValues = new List<KeyValuePair<string, string>>();
+            keyValues.Add(new KeyValuePair<string, string>("name", name));
+            keyValues.Add(new KeyValuePair<string, string>("ms", ms.ToString()));
+            keyValues.Add(new KeyValuePair<string, string>("ss", ss.ToString()));
+            keyValues.Add(new KeyValuePair<string, string>("ds",ds.ToString()));
+            request.Content = new FormUrlEncodedContent(keyValues);
+            var response = await client.SendAsync(request);
+            string responseContent = await response.Content.ReadAsStringAsync();
+        }
+
+        private async void WebUpdate(string name, int ms, int ss, int ds) {
+            var client = new HttpClient();
+            var request = new HttpRequestMessage(HttpMethod.Post, "https://ruckelu16.sps-prosek.cz/Home/2018/phpupdate.php");
+            var keyValues = new List<KeyValuePair<string, string>>();
+            keyValues.Add(new KeyValuePair<string, string>("name", name));
+            keyValues.Add(new KeyValuePair<string, string>("ms", ms.ToString()));
+            keyValues.Add(new KeyValuePair<string, string>("ss", ss.ToString()));
+            keyValues.Add(new KeyValuePair<string, string>("ds", ds.ToString()));
+            request.Content = new FormUrlEncodedContent(keyValues);
+            var response = await client.SendAsync(request);
+            string responseContent = await response.Content.ReadAsStringAsync();
+        }
+
+        private void SaveProfile() {
             foreach (Profile profile in profiles) {
                 if (profile.Name == ProfileBox.Text ) {
                     profile.ScrollSensitivity = Convert.ToUInt32(Math.Round(SliderSpeed.Value));
